@@ -3,10 +3,11 @@ import PageWrapper from "./Components/Wrappers/PageWrapper.jsx";
 import PopExit from "./Components/Pops/PopExit.jsx";
 import PopNewCard from "./Components/Pops/PopNewCard.jsx";
 import PopBrowse from "./Components/Pops/PopBrowse.jsx";
-import MainContentWrapper from "./Components/Wrappers/MainContantWrapper";
+import MainContentWrapper from "./Components/Wrappers/MainContantWrapper.jsx";
 import Header from "./Components/Header/Header.jsx";
 import { useState, useEffect } from "react";
 import { cardList } from "../data";
+import { GlobalStyle } from "./Components/Common/GlobalStyle";
 
 function App() {
   const [cards, setCards] = useState(cardList);
@@ -32,6 +33,7 @@ function App() {
 
   return (
     <PageWrapper>
+      <GlobalStyle />
       <PopExit />
       <PopNewCard />
       <PopBrowse />

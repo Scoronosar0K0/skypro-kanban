@@ -1,22 +1,24 @@
-import MainColumn from "../Columns/MainColumn.jsx";
+import Column from "../Columns/MainColumn.jsx";
 import { statusList } from "../../../data.js";
+import { Container } from "../Common/CommonStyled.js";
+import { Main, MainBlock, MainContent } from "./MainContentWrapperStyle.jsx";
 
 export default function MainContentWrapper({ cards }) {
   return (
-    <main className="main">
-      <div className="container">
-        <div className="main__block">
-          <div className="main__content">
+    <Main>
+      <Container>
+        <MainBlock>
+          <MainContent>
             {statusList.map((status) => (
-              <MainColumn
+              <Column
                 key={status}
                 title={status}
                 cardList={cards.filter((card) => card.status === status)}
               />
             ))}
-          </div>
-        </div>
-      </div>
-    </main>
+          </MainContent>
+        </MainBlock>
+      </Container>
+    </Main>
   );
 }
