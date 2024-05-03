@@ -1,5 +1,7 @@
 import { CardTheme } from "./CardTheme";
 import { ThemeP } from "../Theme/ThemeP";
+import { Link } from "react-router-dom";
+import { AppRoutes } from "../Pages/appRoutes";
 import {
   CardGroup,
   CardsItem,
@@ -18,18 +20,18 @@ function CardTask({ colorTheme, theme, title, date }) {
           <CardTheme $themeColor={colorTheme}>
             <ThemeP>{theme}</ThemeP>
           </CardTheme>
-          <a href="#popBrowse" target="_self">
+          <Link to={AppRoutes.CARD} target="_self">
             <CardBtn>
               <div />
               <div />
               <div />
             </CardBtn>
-          </a>
+          </Link>
         </CardGroup>
         <CardContent>
-          <a href="" target="_blank">
+          <Link to={AppRoutes.CARD} target="_self">
             <CardTitle>{title}</CardTitle>
-          </a>
+          </Link>
           <CardDate>
             <svg
               xmlns="http://www.w3.org/2000/svg"

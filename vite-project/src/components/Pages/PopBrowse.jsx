@@ -1,3 +1,6 @@
+import { Link } from "react-router-dom";
+import { AppRoutes } from "./appRoutes";
+
 export default function PopBrowse() {
   return (
     <div className="pop-browse" id="popBrowse">
@@ -172,7 +175,7 @@ export default function PopBrowse() {
                 </button>
               </div>
               <button className="btn-browse__close _btn-bg _hover01">
-                <a href="#">Закрыть</a>
+                <Link to={AppRoutes.HOME}>Закрыть</Link>
               </button>
             </div>
             <div className="pop-browse__btn-edit _hide">
