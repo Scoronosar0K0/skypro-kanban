@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import BreackPoints, { BreakPoints } from "../Common/BreakPoints";
+import { BreakPoints } from "../Common/BreakPoints";
 
 const StyledHeader = styled.header`
   width: 100%;
