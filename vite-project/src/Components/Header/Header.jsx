@@ -5,53 +5,47 @@ import {
   StyledHeader,
   HeaderBlock,
   HeaderNav,
-  PopUserSetName,
-  PopUserSetMail,
-  PopUserSetTheme,
-  HeaderPopUserSet,
   HeaderBtnMainNew,
   HeaderUser,
+  HeaderLogo,
 } from "./HeaderStyle";
 import { Container } from "../Common/CommonStyled";
+import { UserHook } from "../../hooks/useUserHook";
+import { ThemeHook } from "../../hooks/useThemeHook";
+import { HeaderPopUser } from "../HeaderPopUser/HeaderPopUser";
 
-export default function Header({ addCard }) {
+export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const { user } = UserHook();
 
   function openMenu() {
     setIsOpen((previous) => !previous);
   }
 
+  const getUser = JSON.parse(user);
+  const { changeTheme } = ThemeHook();
+
   return (
-    <StyledHeader>
+    <StyledHeader $changeTheme={changeTheme}>
       <Container>
         <HeaderBlock>
-          <div className="header__logo _show _light">
-            <Link to={AppRoutes.HOME} target="_self">
-              <img src="./public/images/logo.png" alt="logo" />
+          <HeaderLogo>
+            <Link to={AppRoutes.HOME}>
+              <img
+                src={changeTheme ? "/images/logo_dark.png" : "/images/logo.png"}
+                alt="logo"
+              />
             </Link>
-          </div>
-          <div className="header__logo _dark">
-            <Link to={AppRoutes.HOME} target="_self">
-              <img src="./public/images/logo_dark.png" alt="logo" />
-            </Link>
-          </div>
+          </HeaderLogo>
           <HeaderNav>
-            <HeaderBtnMainNew $sizes="md" onClick={addCard} id="btnMainNew">
-              Создать новую задачу
+            <HeaderBtnMainNew>
+              <Link to={AppRoutes.NEW_CARD}>Создать новую задачу</Link>
             </HeaderBtnMainNew>
-            <HeaderUser onClick={openMenu}>Ivan Ivanov</HeaderUser>
+            <HeaderUser $changeTheme={changeTheme} onClick={openMenu}>
+              {getUser.name}
+            </HeaderUser>
             {isOpen && (
-              <HeaderPopUserSet id="user-set-target">
-                <PopUserSetName>Ivan Ivanov</PopUserSetName>
-                <PopUserSetMail>ivan.ivanov@gmail.com</PopUserSetMail>
-                <PopUserSetTheme>
-                  <p>Темная тема</p>
-                  <input type="checkbox" className="checkbox" name="checkbox" />
-                </PopUserSetTheme>
-                <button type="button" className="_hover03">
-                  <Link to={AppRoutes.EXIT}>Выйти</Link>
-                </button>
-              </HeaderPopUserSet>
+              <HeaderPopUser login={getUser.login} name={getUser.name} />
             )}
           </HeaderNav>
         </HeaderBlock>

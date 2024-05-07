@@ -1,12 +1,19 @@
 import { Link } from "react-router-dom";
 import { AppRoutes } from "./appRoutes";
 import { Modal } from "./SighInStyle";
+import {
+  TextErrorAndLoading,
+  Image,
+} from "../../Components/Common/CommonStyled";
 
-export function Error404() {
+export default function Error404() {
   return (
     <Modal>
-      Упс... Похоже запрашиваемой страницы не существует, пожалуйста вернитесь
-      на <Link to={AppRoutes.HOME}>Главную страницу</Link>
+      <Image src="../../../public/images/404.png" />
+      <TextErrorAndLoading>
+        Ошибка, такой страницы не существует, <br /> вернитесь на{" "}
+        <Link to={AppRoutes.HOME}>Главную страницу</Link>
+      </TextErrorAndLoading>
     </Modal>
   );
 }

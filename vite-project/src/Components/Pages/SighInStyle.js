@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { BreakPoints } from "../../Components/Common/BreakPoints";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -24,7 +25,8 @@ const Modal = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  @media screen and (max-width: 375px) {
+
+  @media screen and (max-width: ${BreakPoints.sm}px) {
     background-color: #ffffff;
   }
 `;
@@ -50,7 +52,8 @@ const ModalBlock = styled.div`
   border-radius: 10px;
   border: 0.7px solid #d4dbe5;
   box-shadow: 0px 4px 67px -12px rgba(0, 0, 0, 0.13);
-  @media screen and (max-width: 375px) {
+
+  @media screen and (max-width: ${BreakPoints.sm}px) {
     max-width: 368px;
     width: 100%;
     padding: 0 16px;
@@ -66,6 +69,7 @@ const ModalFormLogin = styled.form`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
   input:first-child {
     margin-bottom: 7px;
   }
@@ -75,9 +79,12 @@ const ModalInput = styled.input`
   width: 100%;
   min-width: 100%;
   border-radius: 8px;
-  border: 0.7px solid rgba(148, 166, 190, 0.4);
+  border: 0.7px solid;
+  border-color: ${(props) =>
+    props.$wrongUserData ? "red" : "rgba(148, 166, 190, 0.4)"};
   outline: none;
   padding: 10px 8px;
+
   &::-moz-placeholder {
     font-family: "Roboto", sans-serif;
     font-weight: 400;
@@ -86,6 +93,7 @@ const ModalInput = styled.input`
     letter-spacing: -0.28px;
     color: #94a6be;
   }
+
   &::placeholder {
     font-family: "Roboto", sans-serif;
     font-weight: 400;
@@ -99,7 +107,8 @@ const ModalInput = styled.input`
 const ModalBtnEnter = styled.button`
   width: 100%;
   height: 30px;
-  background-color: #565eef;
+  background-color: ${(props) =>
+    props.$wrongUserData ? "#94A6BE" : "#565eef"};
   border-radius: 4px;
   margin-top: 20px;
   margin-bottom: 20px;
@@ -113,9 +122,12 @@ const ModalBtnEnter = styled.button`
   font-weight: 500;
   letter-spacing: -0.14px;
   color: #ffffff;
+
   &:hover {
-    background-color: #33399b;
+    background-color: ${(props) =>
+      props.$wrongUserData ? "#94A6BE" : "#33399b"};
   }
+
   a {
     width: 100%;
     height: 100%;
@@ -124,13 +136,15 @@ const ModalBtnEnter = styled.button`
     align-items: center;
     justify-content: center;
   }
-  @media screen and (max-width: 375px) {
+
+  @media screen and (max-width: ${BreakPoints.sm}px) {
     height: 40px;
   }
 `;
 
 const ModalFormGroup = styled.div`
   text-align: center;
+
   p,
   a {
     color: rgba(148, 166, 190, 0.4);

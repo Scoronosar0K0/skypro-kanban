@@ -1,10 +1,14 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { AppRoutes } from "./appRoutes";
+import { delTasks, editTasks } from "../../../api";
+import { DayPicker } from "react-day-picker";
+import { TaskHook } from "../../hooks/useTaskHook";
+import { UserHook } from "../../hooks/useUserHook";
 import {
+  PopBrowseTopBlock,
   StyledPopBrowse,
   PopBrowseContainer,
   PopBrowseBlock,
-  PopBrowseTopBlock,
   PopBrowseTtl,
   FormBrowseBlock,
   SubTtl,
@@ -12,7 +16,7 @@ import {
   ButtonMenu,
   ButtonActionForTest,
   ButtonGroup,
-  PopBrowseBtnBrowse,
+  PopBrowseBtnEdit,
   CategoriesP,
   ThemeDownCategories,
   PopBrowseForm,
@@ -20,25 +24,31 @@ import {
   PopBrowseContent,
   SubTtlP,
 } from "./PopBrowsePageStyle";
-import { delTasks } from "../../../api";
-import { DayPicker } from "react-day-picker";
-import { TaskHook } from "../../hooks/useTaskHook";
-import { UserHook } from "../../hooks/useUserHook";
+import { useState } from "react";
 import { CategoriesTheme, WrapperCalendar } from "../Pops/PopNewCardStyle";
 import { format } from "date-fns";
 import {
   PopBrowseStatus,
-  StatusThemeActive,
+  StatusTheme,
   StatusThemes,
 } from "./EditTaskPageStyle";
 import { ThemeHook } from "../../hooks/useThemeHook";
 import { ru } from "date-fns/locale";
 
-export default function PopBrowse() {
+export default function EditTaskPage() {
   let { id } = useParams();
   const { setCards, cards } = TaskHook();
+  const dataTask = cards.find((card) => card._id === id);
   const navigate = useNavigate(null);
   const { user } = UserHook();
+  const [selectedDay, setSelectedDay] = useState(new Date(dataTask.date));
+  const [newDataTask, setNewDataTask] = useState({
+    title: dataTask.title,
+    topic: dataTask.topic,
+    status: dataTask.status,
+    description: dataTask.description,
+    date: dataTask.date,
+  });
 
   const handleDeleteTaskClick = async (event) => {
     event.preventDefault();
@@ -47,7 +57,19 @@ export default function PopBrowse() {
     await delTasks({ setCards, id, token });
     navigate(AppRoutes.HOME);
   };
-  const dataTask = cards.find((card) => card._id === id);
+
+  const handleEditTaskClick = async (event) => {
+    event.preventDefault();
+    const userData = JSON.parse(user);
+    const token = userData.token;
+    await editTasks({ setCards, id, token, newDataTask });
+    navigate(`/card/${id}`);
+  };
+
+  function handleCancelEditClick() {
+    navigate(`/card/${id}`);
+  }
+
   const { changeTheme } = ThemeHook();
 
   return (
@@ -57,7 +79,7 @@ export default function PopBrowse() {
           <PopBrowseContent>
             <PopBrowseTopBlock>
               <PopBrowseTtl $changeTheme={changeTheme}>
-                {dataTask.title}
+                {newDataTask.title}
               </PopBrowseTtl>
               <CategoriesTheme
                 $changeTheme={changeTheme}
@@ -71,7 +93,41 @@ export default function PopBrowse() {
             <PopBrowseStatus>
               <SubTtlP $changeTheme={changeTheme}>Статус</SubTtlP>
               <StatusThemes>
-                <StatusThemeActive>{dataTask.status}</StatusThemeActive>
+                <StatusTheme
+                  onClick={() =>
+                    setNewDataTask({ ...newDataTask, status: "Без статуса" })
+                  }
+                >
+                  Без статуса
+                </StatusTheme>
+                <StatusTheme
+                  onClick={() =>
+                    setNewDataTask({ ...newDataTask, status: "Нужно сделать" })
+                  }
+                >
+                  Нужно сделать
+                </StatusTheme>
+                <StatusTheme
+                  onClick={() =>
+                    setNewDataTask({ ...newDataTask, status: "В работе" })
+                  }
+                >
+                  В работе
+                </StatusTheme>
+                <StatusTheme
+                  onClick={() =>
+                    setNewDataTask({ ...newDataTask, status: "Тестирование" })
+                  }
+                >
+                  Тестирование
+                </StatusTheme>
+                <StatusTheme
+                  onClick={() =>
+                    setNewDataTask({ ...newDataTask, status: "Готово" })
+                  }
+                >
+                  Готово
+                </StatusTheme>
               </StatusThemes>
             </PopBrowseStatus>
             <PopBrowseWrap>
@@ -84,9 +140,14 @@ export default function PopBrowse() {
                     $changeTheme={changeTheme}
                     name="text"
                     id="textArea01"
-                    readOnly
-                    placeholder="Описание задачи"
+                    placeholder="Введите описание задачи..."
                     defaultValue={dataTask.description}
+                    onChange={(e) =>
+                      setNewDataTask({
+                        ...newDataTask,
+                        description: e.target.value,
+                      })
+                    }
                   />
                 </FormBrowseBlock>
               </PopBrowseForm>
@@ -98,14 +159,13 @@ export default function PopBrowse() {
                   locale={ru}
                   showOutsideDays
                   mode="single"
-                  // onSelect={setSelectedDay}
+                  onSelect={setSelectedDay}
                   required
-                  selected={new Date(dataTask.date)}
+                  selected={selectedDay}
                 />
-
                 <p>
-                  <span>Срок исполнения: </span>{" "}
-                  {format(dataTask.date, "dd.MM.yyyy")}
+                  <span>Срок исполнения: </span>
+                  {format(selectedDay, "dd.MM.yyyy")}
                 </p>
               </WrapperCalendar>
             </PopBrowseWrap>
@@ -115,14 +175,19 @@ export default function PopBrowse() {
                 {dataTask.topic}
               </CategoriesTheme>
             </ThemeDownCategories>
-            <PopBrowseBtnBrowse>
+            <PopBrowseBtnEdit>
               <ButtonGroup>
-                <ButtonActionForTest $changeTheme={changeTheme}>
-                  <Link to={`/edit-card/${id}`}>Редактировать задачу</Link>
+                <ButtonMenu onClick={handleEditTaskClick}>Сохранить</ButtonMenu>
+                <ButtonActionForTest
+                  $changeTheme={changeTheme}
+                  onClick={handleCancelEditClick}
+                >
+                  Отменить
                 </ButtonActionForTest>
                 <ButtonActionForTest
                   $changeTheme={changeTheme}
                   onClick={handleDeleteTaskClick}
+                  id="btnDelete"
                 >
                   Удалить задачу
                 </ButtonActionForTest>
@@ -130,7 +195,7 @@ export default function PopBrowse() {
               <ButtonMenu>
                 <Link to={AppRoutes.HOME}>Закрыть</Link>
               </ButtonMenu>
-            </PopBrowseBtnBrowse>
+            </PopBrowseBtnEdit>
           </PopBrowseContent>
         </PopBrowseBlock>
       </PopBrowseContainer>

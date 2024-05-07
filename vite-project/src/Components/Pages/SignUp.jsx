@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AppRoutes } from "./appRoutes";
 import {
   Wrapper,
@@ -11,8 +11,50 @@ import {
   ModalBtnSignUpEnt,
   ModalFormGroup,
 } from "./SingUpStyle";
+import { useState } from "react";
+import { registration } from "../../../api";
+import { MessageError } from "../Common/CommonStyled";
+import { UserHook } from "../../hooks/useUserHook";
 
 export default function SingUpPage() {
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [wrongUserData, setWrongUserData] = useState(null);
+  const navigate = useNavigate();
+  const [newUser, setNewUser] = useState({
+    firstName: "",
+    login: "",
+    password: "",
+  });
+  const { setUser } = UserHook();
+
+  const handleRegistrationSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+      if (!newUser.firstName || !newUser.login || !newUser.password) {
+        setErrorMessage(true);
+        return;
+      }
+      const userRegistration = await registration({
+        name: newUser.firstName,
+        login: newUser.login,
+        password: newUser.password,
+      });
+      await localStorage.setItem("user", JSON.stringify(userRegistration));
+      await localStorage.setItem("token", userRegistration.token);
+
+      await setUser(localStorage.user);
+      navigate(AppRoutes.HOME);
+    } catch (error) {
+      setWrongUserData(true);
+    } finally {
+      setTimeout(() => {
+        setWrongUserData(null);
+        setErrorMessage(null);
+      }, 3000);
+    }
+  };
+
   return (
     <Wrapper>
       <ContainerSignUp>
@@ -21,36 +63,66 @@ export default function SingUpPage() {
             <ModalTtl>
               <h2>Регистрация</h2>
             </ModalTtl>
-            <ModalFormLogin id="formLogUp" action="#">
+            <ModalFormLogin
+              onSubmit={handleRegistrationSubmit}
+              id="formLogUp"
+              action="#"
+            >
               <ModalInput
-                className="first-name"
+                $errorMessage={errorMessage}
+                $wrongUserData={wrongUserData}
                 type="text"
-                name="first-name"
+                name="firstName"
                 id="first-name"
                 placeholder="Имя"
+                onChange={(e) =>
+                  setNewUser({ ...newUser, firstName: e.target.value })
+                }
               />
               <ModalInput
-                className="login"
+                $errorMessage={errorMessage}
+                $wrongUserData={wrongUserData}
                 type="text"
                 name="login"
                 id="loginReg"
                 placeholder="Эл. почта"
+                onChange={(e) =>
+                  setNewUser({ ...newUser, login: e.target.value })
+                }
               />
               <ModalInput
-                className="password-first"
+                $errorMessage={errorMessage}
+                $wrongUserData={wrongUserData}
                 type="password"
                 name="password"
                 id="passwordFirst"
                 placeholder="Пароль"
+                onChange={(e) =>
+                  setNewUser({ ...newUser, password: e.target.value })
+                }
               />
-              <ModalBtnSignUpEnt className="_hover01" id="SignUpEnter">
-                <Link to={AppRoutes.HOME}>Зарегистрироваться</Link>
+              <MessageError>
+                {errorMessage
+                  ? "Введенные вами данные не корректны. Чтобы завершить регистрацию, заполните все поля в форме."
+                  : ""}
+              </MessageError>
+              <MessageError>
+                {wrongUserData
+                  ? "Введенные вами данные не корректны. Чтобы завершить регистрацию, введите данные корректно и повторите попытку."
+                  : ""}
+              </MessageError>
+              <ModalBtnSignUpEnt
+                disabled={errorMessage || wrongUserData}
+                $errorMessage={errorMessage}
+                $wrongUserData={wrongUserData}
+                type="submit"
+                id="SignUpEnter"
+              >
+                Зарегистрироваться
               </ModalBtnSignUpEnt>
               <ModalFormGroup>
-                <p>
-                  Уже есть аккаунт?{" "}
-                  <Link to={AppRoutes.SIGNIN}>Войдите здесь</Link>
-                </p>
+                <p>Уже есть аккаунт?</p>
+                <Link to={AppRoutes.SIGNIN}>Войдите здесь</Link>
               </ModalFormGroup>
             </ModalFormLogin>
           </ModalBlock>

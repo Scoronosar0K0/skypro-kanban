@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { BreakPoints } from "../Common/BreakPoints";
 
 const CardGroup = styled.div`
   width: 100%;
@@ -10,6 +11,17 @@ const CardGroup = styled.div`
 `;
 
 const CardsItem = styled.div`
+  @keyframes card-animation {
+    0% {
+      height: 0;
+      opacity: 0;
+    }
+
+    100% {
+      height: auto;
+      opacity: 1;
+    }
+  }
   padding: 5px;
   animation-name: card-animation;
   animation-duration: 500ms;
@@ -28,6 +40,7 @@ const CardDate = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-start;
+
   p {
     margin-left: 6px;
     font-size: 10px;
@@ -35,6 +48,7 @@ const CardDate = styled.div`
     color: #94a6be;
     letter-spacing: 0.2px;
   }
+
   svg {
     width: 13px;
   }
@@ -44,24 +58,24 @@ const CardTitle = styled.h3`
   font-size: 14px;
   font-weight: 500;
   line-height: 18px;
-  color: #000000;
+  color: ${(props) => (props.$changeTheme ? "#FFFFFF" : "#000000")};
   margin-bottom: 10px;
 `;
 
 const CardsCard = styled.div`
   width: 220px;
   height: 130px;
-  background-color: #ffffff;
+  background-color: ${(props) => (props.$changeTheme ? "#20202C" : "#ffffff")};
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: stretch;
   padding: 15px 13px 19px;
-  @media screen and (max-width: 1200px) {
+
+  @media screen and (max-width: ${BreakPoints.xl}px) {
     width: 220px;
     height: 130px;
-    background-color: #ffffff;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
@@ -78,6 +92,7 @@ const CardBtn = styled.div`
   align-items: center;
   justify-content: space-around;
   padding: 2px;
+
   div {
     width: 4px;
     height: 4px;
